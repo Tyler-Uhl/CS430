@@ -1,0 +1,85 @@
+//DFA TK
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+//import Uhl.FSA;
+//import Uhl.TransKey;
+
+public class DFA_TK extends FSA { //Deterministic Finite State Automata
+
+		public int currState;	 //current state
+		int numState;			 //set of states - usually 0 to numStates - 1
+		int initState;			 //initial state - usually 0
+		Set<Integer> acceptSet;  //set of accept states
+
+		//transition table
+		//implemented as a map or a map
+		//outer map maps starting state to each inner map
+		//inner map maps char input to ending state, type is Map<Character,Integer>
+		Map<TransKey, Integer> transTable;
+
+		public DFA_TK(int pnumState, int pinitState, Set<Integer>pacceptSet, Map<TransKey, Integer> ptransTable) {
+
+
+		}
+
+		public void reset() {
+
+		}
+
+
+		//transition state 
+		//must use Integer to compare with null - not found
+		public Integer move(int startState, char c) {
+			return null;
+		}
+
+		//run DFS
+		//use reset(), print visited states to console
+		public boolean simulate() {
+			reset();
+			char c = nextChar(inputString, currState);
+
+			//terminate on eof/eol
+			while (c != '\0') {
+				System.out.print(currState + "->");
+
+				Integer nextState = move(currState, c);
+				if (nextState == null) return false;
+				//set next sate
+				currState = nextState;
+				//get next input char
+				c = nextChar(inputString, currState);
+			}
+
+			System.out.print(currState + ":");
+			//is terminating state in acceptance state?
+			return acceptSet.contains(currState);
+		}
+
+		//helper functions
+
+		//fill acceptSet with an array of integers
+		public void fillAccept(Set<Integer> pacceptSet, int[]acceptA) {
+
+
+		}
+
+		//add a transition edge
+		public static void addTrans(Map<Character, Integer>[] ptransTable, int startState, char c, int endState) {
+	        Map<Character, Integer> innerTable = ptransTable[startState];
+	        if (innerTable == null) {
+	            innerTable = new HashMap<Character, Integer>();
+	            ptransTable[startState] = innerTable;
+	        }
+	        innerTable.put(c, endState);
+	    }
+		public String toString() {
+			String output = "";
+			output += numState + "\n";
+			output += acceptSet + "\n";
+			output += transTable + "\n";
+			return output;
+		}
+	}
