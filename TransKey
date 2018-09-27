@@ -1,0 +1,28 @@
+public class TransKey {
+		int startState;
+		char c;
+
+		TransKey(int pstartState, char pc) {
+
+		}
+
+		public boolean equals(Object o) {
+			if (o instanceof TransKey) {
+				TransKey k = (TransKey)o;
+				return startState == k.startState && c == k.c;
+			}
+			return false;
+		}
+
+		//should provide this
+		public int hashCode() {
+			int result = 5381;
+			int hashMultiplier = 33;
+			result = hashMultiplier * result + (int)c;
+			result = hashMultiplier * result + startState;
+			return result;
+		}
+		public String toString() {
+			return "(" + startState + ", " + c + ")";
+		}
+	}
