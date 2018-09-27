@@ -1,0 +1,353 @@
+import java.util.Comparator;
+
+public class Uhl {
+	///////////////////////////////////////////////////////
+	//
+	//PART I Stack
+	//
+	//////////////////////////////////////////////////////
+	public static class Stack {
+
+		private int size;
+		private Object[] storage;
+
+		Stack(int capacity){
+			if (capacity <= 0)
+				throw new IllegalArgumentException("Stack's capacity must be positive");
+			storage = new Object[capacity];
+			size = 0;
+		}
+
+		void push(Object value){
+			if (size >= storage.length){
+				size = storage.length;
+				throw new RuntimeException("Stack overflow");
+			}
+			storage[size] = value;
+			size++;
+		}
+
+		Object pop() {
+			if(size <= 0) {
+				size = 0;
+				throw new RuntimeException("Stack empty");
+			}
+			size--;
+			return storage[size];
+		}
+
+		Object peek() {
+			if (size <= 0) {
+				size = 0;
+				throw new RuntimeException("Stack empty");
+			}
+			return storage[size - 1];
+		}
+
+		boolean isEmpty(){
+			if (storage[size] == null)
+				return true;
+			return false;
+
+		}
+
+		boolean isFull(){
+			if(size == storage.length){
+				return true;
+			}
+			return false;
+
+		}
+
+		public String toString(){
+			String temp = "";
+			for(int i = 0; i < size; i++){
+				temp += storage[i] + " / ";
+			}
+			return temp;
+
+		}
+	}
+	//////////////////////////////////////////////////////////////////
+	//
+	// Queue
+	//
+	//////////////////////////////////////////////////////////////////
+	public static class Queue {
+
+		private int front;
+		private int length;
+		private Object[] storage;
+
+		Queue(int capacity){
+			if (capacity < 1){
+				throw new IllegalArgumentException("Stack's capacity must be positive");
+			}
+			storage = new Object[capacity];
+			front = 0;
+			length = 0;
+		}
+
+		void enqueue(Object value){
+			if (length >= storage.length){
+				length = storage.length;
+				throw new RuntimeException("Queue overflow");
+			}
+			storage[(front + length) % storage.length] = value;
+			length++;
+		}
+
+		Object dequeue() {
+			if(length <= 0) {
+				length = 0;
+				throw new RuntimeException("Queue empty");
+			}
+			Object temp = storage[front];
+			++front;
+			front %= storage.length;
+			length--;
+			return temp;
+		}
+
+		Object peek() {
+			if (length <= 0) {
+				length = 0;
+				throw new RuntimeException("Queue empty");
+			}
+			return storage[length - 1];
+		}
+
+		boolean isEmpty(){
+			if (storage[length] == null)
+				return true;
+			return false;
+
+		}
+
+		boolean isFull(){
+			if(length == storage.length){
+				return true;
+			}
+			return false;
+
+		}
+
+		public String toString(){
+			String temp = "(" + front + "," + length + ") ";
+			for(int i = 0; i < length; i++){
+				temp += storage[(front + i) % storage.length].toString() + " / ";
+
+			}
+			return temp;
+
+		}
+	}
+
+
+	public static class Node<K extends Comparable<K>, T>  {
+		//////////////////////////////////////////////////////////////////
+		//
+		// Node
+		//
+		//////////////////////////////////////////////////////////////////
+
+		K key;
+		T data;
+		Node<K, T> left;
+		Node<K, T> right;
+
+		Node(K k, T o) {
+			key = k;
+			data = o;
+		}
+
+		public boolean equals(Object o) {
+			if (o instanceof Node<?, ?>)
+				return key.equals(((Node<?, ?>)o).key); //only check the keys
+			return false;
+		}
+
+		public String toString() {
+			return "(" + key +  "," + data +  ")";
+		}
+	}
+
+	public static class Heap<K extends Comparable<K>, T> {
+		/////////////////////////////////////////
+		//
+		// Heap
+		//
+		/////////////////////////////////////////
+
+		Node<K,T>[] storage;
+		int bottom;
+		Comparator<K> comp; // this is used to compare for max or min heap
+		int child;
+		int parent;
+		Heap(int capacity){
+			if(capacity <0){
+				throw new IllegalArgumentException("Stack's capacity must be positive");
+			}
+			storage = new Node[capacity];
+			bottom = 0;
+			comp = new Comparator<K> () {
+				public int compare(K k1, K k2) {
+					return k1.compareTo(k2);
+				}
+			};
+		}
+
+
+		public void insert(Node<K,T> node){
+			int child;
+			int parent;
+
+			if(bottom == storage.length){
+				bottom = storage.length;
+				throw new RuntimeException("Heap overflow");
+			}
+
+			storage[bottom] = node;
+			child = bottom;
+			bottom++;
+
+			Node<K, T> temp;
+
+			while (child > 0) {
+				parent = ((child -1) / 2);
+				if(comp.compare(storage[parent].key,storage[child].key) < 0){				
+					temp = storage[parent];
+					storage[parent] = storage[child];
+					storage[child] = temp;
+					child = parent;
+				}
+				else{
+					break;
+				}
+			}
+		}
+
+		public void insert(K key, T data){
+			insert(new Node<K, T>(key, data));
+		}
+
+		boolean isEmpty(){
+			if (bottom == 0)
+				return true;
+			return false;
+		}
+
+
+		public Node<K, T> remove(){
+			if (isEmpty())
+				return null;
+			Node<K,T> root = storage[0];
+			Node<K,T> node = storage[bottom -1];
+			bottom--;
+			if (isEmpty()) {
+				return root;
+			}
+			int parent = 0;
+			storage[parent] = node;
+
+			while (2*parent+1 < bottom) {
+				int child1 = 2*parent+1;
+				K key1 = (K)storage[child1].key;
+				K key = key1;
+				int child = child1;
+				int child2=child1+1;
+
+				if(child2<bottom){
+					K key2 = (K)storage[child2].key;
+					if(comp.compare(key1, key2) < 0){
+						key = key2;
+						child = child2;
+					}
+				}
+				if(comp.compare(key, node.key) > 0){
+					storage[parent] = storage[child];
+					storage[child] = node;
+					parent = child;
+				} else
+					break;
+			}
+			return root;
+		}
+
+		public Object peek(Node<K,T> node){
+			if (isEmpty())
+				return null;
+			else{
+				return node;
+			}
+		}
+
+		public Comparator<K> minComp = new Comparator<K> () {
+			public int compare(K k1, K k2) {
+				return k2.compareTo(k1);
+			}
+		};
+
+		public void setComparator(Comparator<K> c){
+			comp=c;
+		}
+
+
+		public String toString() {
+			String temp = "";
+			int nextLevel = 2;
+			for (int i = 0; i < bottom; i++) {
+				if (i == nextLevel-1) {
+					temp += "\n";
+					nextLevel *= 2;
+				}
+				temp += storage[i];
+			}
+			temp += "";
+			return temp;
+		}
+	}
+
+
+	////////////////////////////////////////
+	//
+	// PriorityQueue
+	//
+	////////////////////////////////////////
+	public static class PQKey<K extends Comparable<K>> implements Comparable<PQKey<K>>{
+
+		K level;
+		int keyOrder;
+		static int keyCount;
+
+		PQKey(K k){
+			level = k;
+			keyOrder = keyCount;
+			keyCount++;
+		}
+
+
+		public int compareTo(PQKey<K> k) {
+			int compLevel = this.level.compareTo(k.level);
+			if(compLevel !=0)
+				return compLevel;
+			else
+				return k.keyOrder - keyOrder;
+		}
+		public String toString() {
+			return level +  "[" + keyOrder +  "]";
+		}
+
+	}
+
+
+
+	public class PriorityQueue <K extends PQKey<?>, T> extends Heap<PQKey<?>, T>
+	{
+		PriorityQueue(int capacity) {
+			super(capacity);
+		}
+	}
+
+
+}
