@@ -1,0 +1,22 @@
+//DFA
+import java.util.Map;
+
+//import Uhl.FSA;
+
+public class DFA extends FSA {
+		Map<Character, Integer>[] transTable;
+		
+		//TODO: Make all methods work
+		//HINT: use below as example
+		public String toString() {
+			String output = "";
+			output += numState + "\n";
+			output += acceptSet + "\n";
+			output += "[";
+			for (int i = 0; i < transTable.length; i++) {
+				output += i + "=" + transTable[i];
+				output += (i < transTable.length-1)?", ":"]\n";
+			}
+			return output;
+		}
+	}
