@@ -127,7 +127,7 @@ def depthFirstSearch(problem):
                 exploredSet.add(nextNode)
                 theFringe.push(nextNode)
                 path.append(nextNode)
-                solutionList = nextNode + path
+                solutionList = nextNode, path
                          
             
     return solutionList   
@@ -139,11 +139,100 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    
+    print('Start', problem.getStartState())
+    print('Is the start a goal?', problem.isGoalState(problem.getStartState()))
+    print('Starts successors:', problem.getSuccessors(problem.getStartState()))
+    
+    #variables to get the start state, next moves, and goal
+    state = problem.getStartState
+    nodeSuccessors = problem.getSuccessors(problem.getStartState())
+    goalState = problem.isGoalState(problem.getStartState())
+    
+    #nodeSuccessors variable is a list and can be iterated over
+    #displaying their values below
+    print nodeSuccessors[0]
+    print nodeSuccessors[1]
+    print nodeSuccessors[2]
+    
+    #area to push nodes onto
+    theFringe = util.Queue()
+    
+    #pushing the start state to the stack
+    theFringe.push(state)
+    
+    #initializing the explored set
+    exploredSet = set()
+    
+    #solution
+    path = []
+    solutionList = state,path
+    
+    while not theFringe.isEmpty():
+        curNode = theFringe.pop()
+        successor = nodeSuccessors(curNode)
+        
+        if curNode == goalState:
+            return solutionList
+        
+        for nextNode in successor:
+            if not nextNode in exploredSet:
+                exploredSet.add(nextNode)
+                theFringe.push(nextNode)
+                path.append(nextNode)
+                solutionList = nextNode, path
+                         
+            
+    return solutionList   
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    print('Start', problem.getStartState())
+    print('Is the start a goal?', problem.isGoalState(problem.getStartState()))
+    print('Starts successors:', problem.getSuccessors(problem.getStartState()))
+    
+    #variables to get the start state, next moves, and goal
+    state = problem.getStartState
+    nodeSuccessors = problem.getSuccessors(problem.getStartState())
+    goalState = problem.isGoalState(problem.getStartState())
+    
+    #nodeSuccessors variable is a list and can be iterated over
+    #displaying their values below
+    print nodeSuccessors[0]
+    print nodeSuccessors[1]
+    print nodeSuccessors[2]
+    
+    #area to push nodes onto
+    theFringe = util.PriorityQueue()
+    
+    #pushing the start state to the stack
+    theFringe.push((state),0)
+    
+    #initializing the explored set
+    exploredSet = set()
+    
+    #solution
+    path = []
+    solutionList = state,path
+    
+    while not theFringe.isEmpty():
+        curNode = theFringe.pop()
+        successor = nodeSuccessors(curNode)
+        
+        if curNode == goalState:
+            return solutionList
+        
+        for nextNode in successor:
+            if not nextNode in exploredSet:
+                exploredSet.add(nextNode)
+                theFringe.push(nextNode)
+                path.append(nextNode)
+                solutionList = nextNode, path
+                         
+            
+    return solutionList       
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
