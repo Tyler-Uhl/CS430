@@ -297,30 +297,25 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, (False, False, False, False))
-        util.raiseNotDefined()
+        
+        visitedCorners = (False, False, False, False)
+        return (self.startingPosition, visitedCorners)
+        #util.raiseNotDefined()
+
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+ 
         curPosition = state[0]
+        corners = state[1]
+        for corner in self.corners:
+            return corners[0] and corners[1] and corners[2] and corners[3]
+ 
         
-        #for curPosition in self.corners:
-        if curPosition == self.corners[0]:
-            return state[1][0]
-        elif curPosition == self.corners[1]:
-            return state[1][1]
-        elif curPosition == self.corners[2]:
-            return state[1][2]
-        elif curPosition == self.corners[3]:
-            return state[1][3]
-        else:
-            return state[1][0] and state[1][1] and state[1][2] and state[1][3]
-
-        
-        util.raiseNotDefined()
+        #util.raiseNotDefined()
     def getSuccessors(self, state):
         """
         Returns successor states, the actions they require, and a cost of 1.
@@ -333,6 +328,9 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        corners = state[1]
+        curPosition = state[0]
+        cost = 1
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -347,18 +345,20 @@ class CornersProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty)
-                if nextState in self.corners[0]:
-                    state[1][0] = True
-                elif nextState in self.corners[1]:
-                    state[1][1] = True
-                elif nextState in self.corners[2]:
-                    state[1][2] = True
-                elif nextState in self.corners[3]:
-                    state[1][3] = True
-                visited = state[1]
-                cost = 1
-                
-                successors.append( ((nextState, visited), action, cost))
+                if nextState in self.corners:
+                    if nextState == self.corners[0]:
+                        visitedCorners = True, corners[1], corners[2], corners[3]
+                    elif nextState == self.corners[1]:
+                        visitedCorners = corners[0], True, corners[2], corners[3]
+                    elif nextState == self.corners[2]:
+                        visitedCorners = corners[0], corners[1], True, corners[3]
+                    elif nextState == self.corners[3]:
+                        visitedCorners = corners[0], corners[1], corners[2], True 
+                    successor = (((nextState, visitedCorners), action, cost))
+                else:
+                    successor = (((nextState, corners), action, cost))
+
+                successors.append(successor)
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
